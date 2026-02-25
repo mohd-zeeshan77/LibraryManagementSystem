@@ -1,4 +1,4 @@
-﻿using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Dtos;
 using LibraryApi.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -19,9 +19,9 @@ namespace LibraryApi.Web.Endpoints
             bookGroup.MapGet("{Id:int}", GetBook);
             return endpoints;
         }
-        public static Ok<IEnumerable<BookDto>> GetBooks(BookService service)
+        public static Ok<IEnumerable<BookDto>> GetBooks(BookService service,string? keyword)
         {
-            IEnumerable<BookDto> list = service.GetBooks();
+            IEnumerable<BookDto> list = service.GetBooks(keyword);
             return TypedResults.Ok(list);
         }
         public static IResult GetBook(BookService service, int Id)

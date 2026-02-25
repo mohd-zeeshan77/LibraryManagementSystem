@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +8,8 @@ namespace LibraryApi.Persistence
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public required bool Type { get; set; }
+        public required int TypeId { get; set; }
+        public required MemberType memberType { get; set; }
         public IList<IssuedBook> IssuedBooks { get; set; } = [];
     }
 }

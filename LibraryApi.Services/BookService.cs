@@ -1,4 +1,4 @@
-﻿using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Dtos;
 using LibraryApi.Persistence;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,9 +17,15 @@ namespace LibraryApi.Services
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _logger = logger;
         }
-        public IEnumerable<BookDto> GetBooks()
+        public IEnumerable<BookDto> GetBooks(string? keyword = null)
         {
-            IList<BookDto> books =_dbContext.Book
+            IQueryable<Book> query = _dbContext.Book.AsQueryable();
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(b=>b.Name.Contains(keyword));
+            }
+
+            IList<BookDto> books =query
                             .Select(b=> new BookDto(
                                 b.Id,
                                 b.Name,

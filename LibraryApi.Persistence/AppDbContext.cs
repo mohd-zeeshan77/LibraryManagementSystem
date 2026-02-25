@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace LibraryApi.Persistence
@@ -9,6 +9,7 @@ namespace LibraryApi.Persistence
         public DbSet<Book> Book { get; init; }
         public DbSet<IssuedBook> IssuedBook { get; init; }
         public DbSet<Category> Category { get; init; }
+        public DbSet<MemberType> MemberType { get; init; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
