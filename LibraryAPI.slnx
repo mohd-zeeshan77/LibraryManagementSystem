@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="LibraryApi.Core/LibraryApi.Core.csproj" />
+  <Project Path="LibraryApi.Persistence/LibraryApi.Persistence.csproj" />
+  <Project Path="LibraryApi.Services/LibraryApi.Services.csproj" />
+  <Project Path="LibraryApi.Web/LibraryApi.Web.csproj" />
+</Solution>

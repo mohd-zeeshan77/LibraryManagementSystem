@@ -1,0 +1,33 @@
+﻿using LibraryApi.Core.Dtos;
+using LibraryApi.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace LibraryApi.Web.Endpoints
+{
+    public static class CategoryEndpoints
+    {
+        public static IEndpointRouteBuilder MapCategoryGroup(this IEndpointRouteBuilder endpoints)
+        {
+            return endpoints
+                .MapGroup("categories");
+        }
+        public static IEndpointRouteBuilder MapCategoryEndpoints(this IEndpointRouteBuilder endpoints)
+        {
+            ArgumentNullException.ThrowIfNull(endpoints);
+            IEndpointRouteBuilder categoryGroup = endpoints.MapCategoryGroup();
+            categoryGroup.MapGet("", GetCategories);
+            categoryGroup.MapGet("{Id:int}", GetCategoryBook);
+            return endpoints;
+        }
+        public static Ok<IEnumerable<CategoryDto>> GetCategories(CategoryService service)
+        {
+            IEnumerable<CategoryDto> categories = service.GetCategories();
+            return TypedResults.Ok(categories);
+        }
+        public static IResult GetCategoryBook(CategoryService service , int Id)
+        {
+            CategoryBookDto? dto = service.GetCategoryBook(Id);
+            return dto is null ? TypedResults.NotFound(): TypedResults.Ok(dto);
+        }
+    }
+}
