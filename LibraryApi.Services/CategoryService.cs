@@ -1,4 +1,4 @@
-﻿using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Dtos;
 using LibraryApi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -38,11 +38,12 @@ namespace LibraryApi.Services
             IImmutableList<BookDto> books = category.Books.Select(b=> new BookDto(
                                                                     b.Id,
                                                                     b.Name,
-                                                                    b.AutherName,
+                                                                    b.AuthorName,
                                                                     b.Publisher,
                                                                     b.Edition,
                                                                     b.Price,
-                                                                    b.CategoryId))
+                                                                    b.Category.Name,
+                                                                    b.Stock))
                 .ToList()
                 .ToImmutableList();
             return new CategoryBookDto(category.Id, category.Name, books);

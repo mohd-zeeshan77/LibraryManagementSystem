@@ -1,56 +1,61 @@
 using LibraryApi.Core.Dtos;
 using LibraryApi.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace LibraryApi.Services
-{
-    public sealed class BookService
-    {
-        private readonly AppDbContext _dbContext;
-        private readonly ILogger<BookService> _logger;
-        public BookService(AppDbContext dbContext, ILogger<BookService> logger)
-        {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _logger = logger;
-        }
-        public IEnumerable<BookDto> GetBooks(string? keyword = null)
-        {
-            IQueryable<Book> query = _dbContext.Book.AsQueryable();
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                query = query.Where(b=>b.Name.Contains(keyword));
-            }
+namespace LibraryApi.Services;
 
-            IList<BookDto> books =query
-                            .Select(b=> new BookDto(
-                                b.Id,
-                                b.Name,
-                                b.AutherName,
-                                b.Publisher,
-                                b.Edition,
-                                b.Price,
-                                b.CategoryId))
-                            .ToArray();
-            return new ReadOnlyCollection<BookDto>(books);
-        }
-        public BookDto? GetBook(int Id)
+public sealed class BookService
+{
+    private readonly AppDbContext _dbContext;
+    private readonly ILogger<BookService> _logger;
+    public BookService(AppDbContext dbContext, ILogger<BookService> logger)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger;
+    }
+    public IEnumerable<BookDto> GetBooks(string? keyword = null)
+    {
+        IQueryable<Book> query = _dbContext.Book.AsQueryable();
+        if (!string.IsNullOrEmpty(keyword))
         {
-            Book? book  = _dbContext.Book.FirstOrDefault(b => b.Id == Id);
-            if(book == null)
-            {
-                return null;
-            }
-            return new BookDto(book.Id,
-                book.Name,
-                book.AutherName,
-                book.Publisher,
-                book.Edition,
-                book.Price,
-                book.CategoryId);
+            query = query.Where(b=>b.Name.Contains(keyword));
         }
+
+        IList<BookDto> books =query
+                        .Include(b=>b.Category)
+                        .Select(b=> new BookDto(
+                            b.Id,
+                            b.Name,
+                            b.AuthorName,
+                            b.Publisher,
+                            b.Edition,
+                            b.Price,
+                            b.Category.Name,
+                            b.Stock))
+                        .ToArray();
+        return new ReadOnlyCollection<BookDto>(books);
+    }
+    public BookDto? GetBook(int Id)
+    {
+        Book? book  = _dbContext.Book
+                            .Include(b=>b.Category)
+                            .FirstOrDefault(b => b.Id == Id);
+        if(book == null)
+        {
+            return null;
+        }
+        return new BookDto(book.Id,
+            book.Name,
+            book.AuthorName,
+            book.Publisher,
+            book.Edition,
+            book.Price,
+            book.Category.Name,
+            book.Stock);
     }
 }

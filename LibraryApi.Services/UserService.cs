@@ -22,9 +22,21 @@ public sealed class UserService
     public IEnumerable<UserDto> GetUsers()
     {
         IList<UserDto> users = _dbContext.User
-                                    .Select(u=>new UserDto(u.Id,u.Name,u.TypeId))
+                                    .Include(u=>u.MemberType)
+                                    .Select(u=>new UserDto(u.Id,u.Name,u.MemberType.Name))
                                     .ToArray();
         return new ReadOnlyCollection<UserDto>(users);
+    }
+    public UserDto? GetUserById(int Id)
+    {
+        User? user = _dbContext.User
+            .Include(u=>u.MemberType)
+            .FirstOrDefault(u => u.Id == Id);
+        if(user == null)
+        {
+            return null;
+        }
+        return new UserDto(user.Id, user.Name, user.MemberType.Name);
     }
     public MemberTypeDto? GetMemberType(int Id)
     {
@@ -36,7 +48,7 @@ public sealed class UserService
             return null;
         }
         IImmutableList<UserDto> users = member.Users
-                                            .Select(u => new UserDto(u.Id, u.Name, u.TypeId))
+                                            .Select(u => new UserDto(u.Id, u.Name, u.MemberType.Name))
                                             .ToList()
                                             .ToImmutableList();
 

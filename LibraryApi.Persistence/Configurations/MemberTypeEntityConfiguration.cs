@@ -13,7 +13,7 @@ public sealed class MemberTypeEntityConfiguration : IEntityTypeConfiguration<Mem
         builder.ToTable("MemberType");
         builder.HasKey(x => x.Id);
         builder.HasMany(m => m.Users)
-            .WithOne(u => u.memberType)
+            .WithOne(u => u.MemberType)
             .HasForeignKey(u => u.TypeId);
     }
 }

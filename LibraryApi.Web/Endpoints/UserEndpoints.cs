@@ -16,6 +16,7 @@ public static class UserEndpoints
         ArgumentNullException.ThrowIfNull(endpoints);
         IEndpointRouteBuilder userGroup = endpoints.MapUserGroup();
         userGroup.MapGet("", GetUsers);
+        userGroup.MapGet("{Id:int}", GetUserById);
         userGroup.MapGet("type/{Id:int}", GetMemberType);
         return endpoints;
     }
@@ -29,5 +30,10 @@ public static class UserEndpoints
     {
         MemberTypeDto? member = service.GetMemberType(Id);
         return member is null ? TypedResults.NotFound():TypedResults.Ok(member);
+    }
+    public static IResult GetUserById(UserService service,int Id)
+    {
+        UserDto? user = service.GetUserById(Id);
+        return user is null ? TypedResults.NotFound(): TypedResults.Ok(user);
     }
 }

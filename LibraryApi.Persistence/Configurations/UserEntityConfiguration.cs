@@ -18,7 +18,7 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.IssuedBooks)
             .WithOne(i => i.User)
             .HasForeignKey(u => u.UserId);
-        builder.HasOne(u => u.memberType)
+        builder.HasOne(u => u.MemberType)
             .WithMany(m => m.Users)
             .HasForeignKey(u => u.TypeId);
     }

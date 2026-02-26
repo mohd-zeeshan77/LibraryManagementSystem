@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +13,7 @@ namespace LibraryApi.Persistence
         public required DateOnly IssuedDate { get; set; }
         public required DateOnly ReturnDate { get; set; }
         public bool RenewStatus {  get; set; }
-        public DateOnly RenewDate { get; set; }
+        public DateOnly? RenewDate { get; set; }
         public bool IsReturned { get; set; }
         public required User User { get; set; }
         public required Book Book { get; set; }
