@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Text;
 using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Requests;
 using LibraryApi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -53,5 +54,23 @@ public sealed class UserService
                                             .ToImmutableList();
 
         return new MemberTypeDto(member.Id, member.Name, users);
+    }
+    public UserDto? AddUser(int TypeId , CreateUserRequest request)
+    {
+        MemberType? member  =  _dbContext.MemberType.FirstOrDefault(s=>s.Id == TypeId);
+        if(member == null)
+        {
+            return null;
+        }
+        User? user = _dbContext.User.FirstOrDefault(u => u.Name == request.Name);
+        if(user is not null)
+        {
+            return null;
+        }
+        user = new User{ Name =  request.Name ,
+                            TypeId = TypeId};
+        _dbContext.Add(user);
+        _dbContext.SaveChanges();
+        return new UserDto(user.Id,user.Name,user.MemberType.Name);
     }
 }

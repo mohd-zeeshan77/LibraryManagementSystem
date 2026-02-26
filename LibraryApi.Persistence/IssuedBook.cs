@@ -15,8 +15,8 @@ namespace LibraryApi.Persistence
         public bool RenewStatus {  get; set; }
         public DateOnly? RenewDate { get; set; }
         public bool IsReturned { get; set; }
-        public required User User { get; set; }
-        public required Book Book { get; set; }
+        public User? User { get; set; }
+        public Book? Book { get; set; }
 
 
     }

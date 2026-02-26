@@ -1,4 +1,5 @@
 using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Requests;
 using LibraryApi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -57,5 +58,41 @@ public sealed class BookService
             book.Price,
             book.Category.Name,
             book.Stock);
+    }
+    public BookDto? AddBook(int categoryId,CreateBookRequest request)
+    {
+        Category? category = _dbContext.Category.FirstOrDefault(c=>c.Id == categoryId);
+        if(category == null)
+        {
+            return null;
+        }
+        Book? book = _dbContext.Book.FirstOrDefault(b => b.Name == request.Name
+                                                    && b.AuthorName == request.AuthorName
+                                                    && b.Publisher == request.Publisher
+                                                    && b.Edition == request.Edition);
+        if(book is not null)
+        {
+            return null;
+        }
+        book = new Book
+        {
+            Name = request.Name,
+            AuthorName = request.AuthorName,
+            Publisher = request.Publisher,
+            Edition = request.Edition,
+            Price = request.Price,
+            CategoryId = categoryId,
+            Stock = request.Stock
+        };
+        _dbContext.Add(book);
+        _dbContext.SaveChanges();
+        return new BookDto(book.Id,
+                           book.Name,
+                           book.AuthorName,
+                           book.Publisher,
+                           book.Edition,
+                           book.Price,
+                           book.Category.Name,
+                           book.Stock);
     }
 }

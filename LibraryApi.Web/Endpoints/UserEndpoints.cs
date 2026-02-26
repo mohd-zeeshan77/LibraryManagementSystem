@@ -1,6 +1,8 @@
 using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Requests;
 using LibraryApi.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApi.Web.Endpoints;
 
@@ -18,6 +20,7 @@ public static class UserEndpoints
         userGroup.MapGet("", GetUsers);
         userGroup.MapGet("{Id:int}", GetUserById);
         userGroup.MapGet("type/{Id:int}", GetMemberType);
+        userGroup.MapPost("type/{TypeId:int}", AddUser);
         return endpoints;
     }
     public static Ok<IEnumerable<UserDto>> GetUsers(UserService service)
@@ -35,5 +38,10 @@ public static class UserEndpoints
     {
         UserDto? user = service.GetUserById(Id);
         return user is null ? TypedResults.NotFound(): TypedResults.Ok(user);
+    }
+    public static IResult AddUser(UserService service , int TypeId,[FromBody]CreateUserRequest request)
+    {
+        UserDto? user = service.AddUser(TypeId, request);
+        return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);
     }
 }
