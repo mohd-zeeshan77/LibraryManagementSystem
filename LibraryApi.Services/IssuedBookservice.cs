@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Requests;
 using LibraryApi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -47,5 +48,112 @@ public sealed class IssuedBookservice
                                     .ToArray();
        return new ReadOnlyCollection<BookIssedDto>(books);
     }
-
+    public BookIssedDto? AddBook(int bookid,int userid,CreateIssuedBookRequest request)
+    {
+        Book? book = _context.Book.FirstOrDefault(b=>b.Id ==  bookid);
+        User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u=>u.Id == userid);
+        if(book == null || user == null)
+        {
+            return null;
+        }
+        IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b=>b.BookId == bookid && b.UserId == userid);
+        if(issuedBook is not null)
+        {
+            return null;
+        }
+        issuedBook = new IssuedBook
+        {
+            BookId = bookid,
+            UserId = userid,
+            Dues = request.Dues,
+            IssuedDate = request.IssuedDate,
+            ReturnDate = request.ReturnedDate,
+            RenewStatus = request.RenewStatus,
+            RenewDate = request.RenewStatus ? request.RenewDate : null,
+            IsReturned = request.IsReturned
+        };
+        _context.Add(issuedBook);
+        _context.SaveChanges();
+        return new BookIssedDto(
+            issuedBook.Id,
+            user.Name,
+            user.MemberType.Name,
+            book.Name,
+            issuedBook.Dues,
+            issuedBook.IssuedDate,
+            issuedBook.ReturnDate,
+            issuedBook.RenewStatus,
+            issuedBook.RenewDate,
+            issuedBook.IsReturned
+            );
+    }
+    public BookIssedDto? IsReturn(int bookid,int userid,IsReturnRequest request)
+    {
+        Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
+        User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
+        if(book == null || user == null)
+        {
+            return null;
+        }
+        IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b => b.BookId == bookid && b.UserId == userid);
+        if (issuedBook is null)
+        {
+            return null;
+        }
+        if (request.IsReturn)
+        {
+            issuedBook.IsReturned = true;
+        }
+        else
+        {
+            issuedBook.IsReturned = false;
+        }
+        _context.SaveChanges();
+        return new BookIssedDto(
+            issuedBook.Id,
+            user.Name,
+            user.MemberType.Name,
+            book.Name,
+            issuedBook.Dues,
+            issuedBook.IssuedDate,
+            issuedBook.ReturnDate,
+            issuedBook.RenewStatus,
+            issuedBook.RenewDate,
+            issuedBook.IsReturned
+            );
+    }
+    public BookIssedDto? UpdateRenew(int bookid,int userid ,UpdateRenewRequest request)
+    {
+        Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
+        User? user = _context.User.Include(u=>u.MemberType).FirstOrDefault(u => u.Id == userid);
+        if(book is null || user is null) { return null; }
+        IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b => b.BookId == bookid && b.UserId == userid);
+        if (issuedBook is null)
+        {
+            return null;
+        }
+        if (request.RenewStatus)
+        {
+            issuedBook.RenewStatus = true;
+            issuedBook.RenewDate = request.RenewDate;
+        }
+        else
+        {
+            issuedBook.RenewStatus = false;
+            issuedBook.RenewDate = null;
+        }
+        _context.SaveChanges();
+        return new BookIssedDto(
+            issuedBook.Id,
+            user.Name,
+            user.MemberType.Name,
+            book.Name,
+            issuedBook.Dues,
+            issuedBook.IssuedDate,
+            issuedBook.ReturnDate,
+            issuedBook.RenewStatus,
+            issuedBook.RenewDate,
+            issuedBook.IsReturned
+            );
+    }
 }

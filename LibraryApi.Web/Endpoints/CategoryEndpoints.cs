@@ -32,7 +32,7 @@ namespace LibraryApi.Web.Endpoints
             CategoryBookDto? dto = service.GetCategoryBook(Id);
             return dto is null ? TypedResults.NotFound(): TypedResults.Ok(dto);
         }
-        public static IResult AddCategory(CategoryService service,[FromBody] CreateCategoryRequest request)
+        public static IResult AddCategory(CategoryService service, CreateCategoryRequest request)
         {
             CategoryDto? category  = service.AddCategory(request);
             return category is null? TypedResults.NotFound(): TypedResults.Ok(category);

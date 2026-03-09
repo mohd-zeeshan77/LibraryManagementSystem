@@ -49,7 +49,7 @@ public sealed class UserService
             return null;
         }
         IImmutableList<UserDto> users = member.Users
-                                            .Select(u => new UserDto(u.Id, u.Name, u.MemberType.Name))
+                                            .Select(u => new UserDto(u.Id, u.Name, member.Name))
                                             .ToList()
                                             .ToImmutableList();
 
@@ -71,6 +71,22 @@ public sealed class UserService
                             TypeId = TypeId};
         _dbContext.Add(user);
         _dbContext.SaveChanges();
-        return new UserDto(user.Id,user.Name,user.MemberType.Name);
+        return new UserDto(user.Id,user.Name,member.Name);
+    }
+    public UserDto? EditPremium(int userid,ChangeMemberTypeRequest request)
+    {
+        User? user = _dbContext.User.FirstOrDefault(s=>s.Id == userid);
+        if(user is null)
+        {
+            return null;
+        }
+        MemberType? member = _dbContext.MemberType.FirstOrDefault(m => m.Id == request.MemberId);
+        if(member is null)
+        {
+            return null;
+        }
+        user.TypeId = request.MemberId;
+        _dbContext.SaveChanges();
+        return new UserDto(userid,user.Name,member.Name);
     }
 }

@@ -21,6 +21,7 @@ public static class UserEndpoints
         userGroup.MapGet("{Id:int}", GetUserById);
         userGroup.MapGet("type/{Id:int}", GetMemberType);
         userGroup.MapPost("type/{TypeId:int}", AddUser);
+        userGroup.MapPut("userid/{userid:int}", ChangeType);
         return endpoints;
     }
     public static Ok<IEnumerable<UserDto>> GetUsers(UserService service)
@@ -39,9 +40,14 @@ public static class UserEndpoints
         UserDto? user = service.GetUserById(Id);
         return user is null ? TypedResults.NotFound(): TypedResults.Ok(user);
     }
-    public static IResult AddUser(UserService service , int TypeId,[FromBody]CreateUserRequest request)
+    public static IResult AddUser(UserService service , int TypeId,CreateUserRequest request)
     {
         UserDto? user = service.AddUser(TypeId, request);
+        return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);
+    }
+    public static IResult ChangeType(UserService service,int userid,ChangeMemberTypeRequest request)
+    {
+        UserDto? user = service.EditPremium(userid, request);
         return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);
     }
 }
