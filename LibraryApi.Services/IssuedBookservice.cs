@@ -19,12 +19,16 @@ public sealed class IssuedBookservice
         _context = context?? throw new ArgumentNullException(nameof(context));
         _logger = logger;
     }
-    public IEnumerable<BookIssedDto> GetIssuedBook(string? name = null)
+    public IEnumerable<BookIssedDto> GetIssuedBook(string? name = null,string? bookname = null)
     {
         IQueryable<IssuedBook> query = _context.IssuedBook.AsQueryable();
         if (!string.IsNullOrEmpty(name))
         {
             query = query.Where(u=>u.User.Name.Contains(name));
+        }
+        if (!string.IsNullOrEmpty(bookname))
+        {
+            query = query.Where(u=>u.Book.Name.Contains(bookname));
         }
         IList<BookIssedDto> books =query
                                     .Include(i => i.Book)

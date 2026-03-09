@@ -18,9 +18,9 @@ public static class IssuedBookEndpoints
         issuedGroup.MapGet("", GetIssuedBookList);
         return endpoints;
     }
-    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service,string? name)
+    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service,string? name,string? bookname)
     {
-        IEnumerable<BookIssedDto> books = service.GetIssuedBook(name);
+        IEnumerable<BookIssedDto> books = service.GetIssuedBook(name, bookname);
         return TypedResults.Ok(books);
     }
 }

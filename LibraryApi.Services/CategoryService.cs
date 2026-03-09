@@ -1,4 +1,5 @@
 using LibraryApi.Core.Dtos;
+using LibraryApi.Core.Requests;
 using LibraryApi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -47,6 +48,18 @@ namespace LibraryApi.Services
                 .ToList()
                 .ToImmutableList();
             return new CategoryBookDto(category.Id, category.Name, books);
+        }
+        public CategoryDto? AddCategory(CreateCategoryRequest request)
+        {
+            Category? category  =  _dbContext.Category.FirstOrDefault(c=>c.Name == request.Name);
+            if(category is not null)
+            {
+                return null;
+            }
+            category=new Category { Name =  request.Name };
+            _dbContext.Add(category);
+            _dbContext.SaveChanges();
+            return new CategoryDto(category.Id, category.Name);
         }
     }
 }
