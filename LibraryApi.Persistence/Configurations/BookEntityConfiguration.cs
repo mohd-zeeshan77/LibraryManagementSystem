@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryApi.Persistence.Configurations;
 
@@ -17,15 +14,15 @@ public sealed class BookEntityConfiguration : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasMaxLength(100);
         builder
-            .Property(b=>b.AuthorName)
+            .Property(b => b.AuthorName)
             .IsRequired()
             .HasMaxLength(100);
         builder
-            .Property(b=>b.Publisher)
+            .Property(b => b.Publisher)
             .IsRequired()
-            .HasMaxLength (100);
+            .HasMaxLength(100);
         builder
-            .Property(b=>b.Edition)
+            .Property(b => b.Edition)
             .IsRequired()
             .HasMaxLength(50);
         builder.HasOne(b => b.Category)

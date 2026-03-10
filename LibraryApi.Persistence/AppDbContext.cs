@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 
-
 namespace LibraryApi.Persistence;
 
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
@@ -13,9 +12,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Type t  = typeof(AppDbContext);
+        Type t = typeof(AppDbContext);
         modelBuilder.ApplyConfigurationsFromAssembly(t.Assembly);
         base.OnModelCreating(modelBuilder);
     }
-
 }

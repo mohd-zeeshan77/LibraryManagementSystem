@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace LibraryApi.Core.Dtos;
 
 public sealed class CategoryDto(int Id, string Name)

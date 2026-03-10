@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace LibraryApi.Core.Dtos;
 
 public sealed class CategoryBookDto(int Id, string Name, IReadOnlyList<BookDto> Books)
