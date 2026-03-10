@@ -20,7 +20,7 @@ public sealed class IssuedBookservice
         _context = context?? throw new ArgumentNullException(nameof(context));
         _logger = logger;
     }
-    public IEnumerable<BookIssedDto> GetIssuedBook(string? name = null,string? bookname = null)
+    public IEnumerable<BookIssedDto> GetIssuedBook(string? name = null,string? bookname = null, bool? isReturned = null)
     {
         IQueryable<IssuedBook> query = _context.IssuedBook.AsQueryable();
         if (!string.IsNullOrEmpty(name))
@@ -31,9 +31,14 @@ public sealed class IssuedBookservice
         {
             query = query.Where(u=>u.Book.Name.Contains(bookname));
         }
+        if(isReturned != null)
+        {
+            query = query.Where(u=>u.IsReturned == isReturned.Value);
+        }
         IList<BookIssedDto> books =query
                                     .Include(i => i.Book)
                                     .Include(i => i.User)
+                                    .ThenInclude(u=>u.MemberType)
                                     .Select(i => new BookIssedDto(
                                                                   i.Id,
                                                                   i.User.Name,
@@ -56,11 +61,17 @@ public sealed class IssuedBookservice
         {
             return null;
         }
-        IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b=>b.BookId == bookid && b.UserId == userid);
+        if (book.Stock <= 0) { return null; }
+        int issuedCount = _context.IssuedBook
+        .Count(i => i.UserId == userid && !i.IsReturned);
+        if (issuedCount >= user.MemberType.MaxBookAllowed) { return null; }
+
+        IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b=>b.BookId == bookid && b.UserId == userid && !b.IsReturned);
         if(issuedBook is not null)
         {
             return null;
         }
+        book.Stock -= 1;
         issuedBook = new IssuedBook
         {
             BookId = bookid,
@@ -70,7 +81,7 @@ public sealed class IssuedBookservice
             ReturnDate = request.ReturnedDate,
             RenewStatus = request.RenewStatus,
             RenewDate = request.RenewStatus ? request.RenewDate : null,
-            IsReturned = request.IsReturned
+            IsReturned = false
         };
         _context.Add(issuedBook);
         _context.SaveChanges();
@@ -100,13 +111,10 @@ public sealed class IssuedBookservice
         {
             return null;
         }
-        if (request.IsReturn)
+        if (request.IsReturn && !issuedBook.IsReturned)
         {
             issuedBook.IsReturned = true;
-        }
-        else
-        {
-            issuedBook.IsReturned = false;
+            book.Stock += 1;
         }
         _context.SaveChanges();
         return new BookIssedDto(

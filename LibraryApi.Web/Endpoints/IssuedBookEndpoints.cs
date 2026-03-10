@@ -22,9 +22,9 @@ public static class IssuedBookEndpoints
         issuedGroup.MapPut("book/{bookid:int}/user/{userid:int}/renew", UpdateRenew);
         return endpoints;
     }
-    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service,string? name,string? bookname)
+    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service,string? name,string? bookname,bool isReturned)
     {
-        IEnumerable<BookIssedDto> books = service.GetIssuedBook(name, bookname);
+        IEnumerable<BookIssedDto> books = service.GetIssuedBook(name, bookname, isReturned);
         return TypedResults.Ok(books);
     }
     private static IResult AddIssuedBook(IssuedBookservice service, int bookid,int userid, CreateIssuedBookRequest request)
