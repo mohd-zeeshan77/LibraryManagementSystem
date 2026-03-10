@@ -111,10 +111,22 @@ public sealed class IssuedBookservice
         {
             return null;
         }
-        if (request.IsReturn && !issuedBook.IsReturned)
+        if (request.IsReturn != issuedBook.IsReturned)
         {
-            issuedBook.IsReturned = true;
-            book.Stock += 1;
+            if (request.IsReturn)
+            {
+                issuedBook.IsReturned = true;
+                book.Stock += 1;
+            }
+            else
+            {
+                if (book.Stock <= 0)
+                {
+                    return null;
+                }
+                issuedBook.IsReturned = false;
+                book.Stock -= 1;
+            }
         }
         _context.SaveChanges();
         return new BookIssedDto(
