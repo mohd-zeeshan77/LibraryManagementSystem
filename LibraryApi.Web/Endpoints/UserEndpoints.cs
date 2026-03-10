@@ -21,7 +21,7 @@ public static class UserEndpoints
         userGroup.MapGet("{Id:int}", GetUserById);
         userGroup.MapGet("type/{Id:int}", GetMemberType);
         userGroup.MapPost("type/{TypeId:int}", AddUser);
-        userGroup.MapPut("userid/{userid:int}", ChangeType);
+        userGroup.MapPatch("userid/{userid:int}", ChangeType);
         return endpoints;
     }
 

@@ -18,7 +18,7 @@ public sealed class IssuedBookservice
         _logger = logger;
     }
 
-    public IEnumerable<BookIssedDto> GetIssuedBook(string? name = null, string? bookname = null,
+    public IEnumerable<BookIssedDto> GetIssuedBooks(string? name = null, string? bookname = null,
         bool? isReturned = null)
     {
         IQueryable<IssuedBook> query = _context.IssuedBook.AsQueryable();
@@ -56,11 +56,15 @@ public sealed class IssuedBookservice
         return new ReadOnlyCollection<BookIssedDto>(books);
     }
 
-    public BookIssedDto? AddBook(int bookid, int userid, CreateIssuedBookRequest request)
+    public BookIssedDto? AddIssuedBook(int bookid, int userid, CreateIssuedBookRequest request)
     {
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
+        if (book == null)
+        {
+            return null;
+        }
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
-        if (book == null || user == null)
+        if (user == null)
         {
             return null;
         }
@@ -90,10 +94,10 @@ public sealed class IssuedBookservice
             BookId = bookid,
             UserId = userid,
             Dues = request.Dues,
-            IssuedDate = request.IssuedDate,
-            ReturnDate = request.ReturnedDate,
-            RenewStatus = request.RenewStatus,
-            RenewDate = request.RenewStatus ? request.RenewDate : null,
+            IssuedDate = DateOnly.FromDateTime(DateTime.Today),
+            ReturnDate = DateOnly.FromDateTime(DateTime.Today).AddDays(7),
+            RenewStatus = false,
+            RenewDate =  null,
             IsReturned = false
         };
         _context.Add(issuedBook);
@@ -112,11 +116,15 @@ public sealed class IssuedBookservice
         );
     }
 
-    public BookIssedDto? IsReturn(int bookid, int userid, IsReturnRequest request)
+    public BookIssedDto? IsReturn(int bookid, int userid, BoolPatchRequest request)
     {
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
+        if (book == null)
+        {
+            return null;
+        }
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
-        if (book == null || user == null)
+        if (user == null)
         {
             return null;
         }
@@ -127,9 +135,9 @@ public sealed class IssuedBookservice
             return null;
         }
 
-        if (request.IsReturn != issuedBook.IsReturned)
+        if (request.BoolRequest != issuedBook.IsReturned)
         {
-            if (request.IsReturn)
+            if (request.BoolRequest)
             {
                 issuedBook.IsReturned = true;
                 book.Stock += 1;
@@ -161,11 +169,15 @@ public sealed class IssuedBookservice
         );
     }
 
-    public BookIssedDto? UpdateRenew(int bookid, int userid, UpdateRenewRequest request)
+    public BookIssedDto? UpdateRenew(int bookid, int userid, BoolPatchRequest request)
     {
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
+        if (book == null)
+        {
+            return null;
+        }
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
-        if (book is null || user is null)
+        if (user is null)
         {
             return null;
         }
@@ -176,10 +188,10 @@ public sealed class IssuedBookservice
             return null;
         }
 
-        if (request.RenewStatus)
+        if (request.BoolRequest)
         {
             issuedBook.RenewStatus = true;
-            issuedBook.RenewDate = request.RenewDate;
+            issuedBook.RenewDate = DateOnly.FromDateTime(DateTime.Today);
         }
         else
         {
