@@ -35,7 +35,7 @@ public sealed class UserService
             .FirstOrDefault(u => u.Id == Id);
         if (user == null)
         {
-            return null;
+            throw new KeyNotFoundException($"User alerady exist {Id}");
         }
 
         return new UserDto(user.Id, user.Name, user.MemberType.Name);
@@ -48,7 +48,7 @@ public sealed class UserService
             .FirstOrDefault(m => m.Id == Id);
         if (member == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Member Type not Exist {Id}");
         }
 
         IImmutableList<UserDto> users = member.Users
@@ -64,13 +64,13 @@ public sealed class UserService
         MemberType? member = _dbContext.MemberType.FirstOrDefault(s => s.Id == TypeId);
         if (member == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Member type not exist {TypeId}");
         }
 
         User? user = _dbContext.User.FirstOrDefault(u => u.Name == request.Name);
         if (user is not null)
         {
-            return null;
+            throw new DuplicateWaitObjectException($"user already exist with {request.Name}");
         }
 
         user = new User { Name = request.Name, TypeId = TypeId };
@@ -84,13 +84,13 @@ public sealed class UserService
         User? user = _dbContext.User.FirstOrDefault(s => s.Id == userid);
         if (user is null)
         {
-            return null;
+            throw new KeyNotFoundException($"user not Exist {userid}");
         }
 
         MemberType? member = _dbContext.MemberType.FirstOrDefault(m => m.Id == request.MemberId);
         if (member is null)
         {
-            return null;
+            throw new KeyNotFoundException($"MemberType not exist");
         }
 
         user.TypeId = request.MemberId;

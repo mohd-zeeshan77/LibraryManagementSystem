@@ -48,7 +48,7 @@ public sealed class BookService
             .FirstOrDefault(b => b.Id == Id);
         if (book == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Book not exist with BookId {Id}");
         }
 
         return new BookDto(book.Id,
@@ -66,7 +66,7 @@ public sealed class BookService
         Category? category = _dbContext.Category.FirstOrDefault(c => c.Id == categoryId);
         if (category == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Category does not exist with {categoryId}");
         }
 
         Book? book = _dbContext.Book.FirstOrDefault(b => b.Name == request.Name
@@ -75,7 +75,7 @@ public sealed class BookService
                                                          && b.Edition == request.Edition);
         if (book is not null)
         {
-            return null;
+           throw new DuplicateWaitObjectException($"This book already exists with {request.Name}");
         }
 
         book = new Book

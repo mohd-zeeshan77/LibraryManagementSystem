@@ -34,7 +34,7 @@ public sealed class CategoryService
             .FirstOrDefault(b => b.Id == Id);
         if (category == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Category not exist with {Id}");
         }
 
         IImmutableList<BookDto> books = category.Books.Select(b => new BookDto(
@@ -56,7 +56,7 @@ public sealed class CategoryService
         Category? category = _dbContext.Category.FirstOrDefault(c => c.Name == request.Name);
         if (category is not null)
         {
-            return null;
+            throw new DuplicateWaitObjectException($"Category already exist {request.Name}");
         }
 
         category = new Category { Name = request.Name };

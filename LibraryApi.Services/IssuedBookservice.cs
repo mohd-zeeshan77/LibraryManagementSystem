@@ -18,8 +18,15 @@ public sealed class IssuedBookservice
         _logger = logger;
     }
 
-    public IEnumerable<BookIssedDto> GetIssuedBooks(string? name = null, string? bookname = null,
-        bool? isReturned = null)
+    public IEnumerable<BookIssedDto> GetIssuedBooks(
+                                                    string? name = null,
+                                                    string? bookname = null,
+                                                    bool? isReturned = null,
+                                                    DateOnly? issueDate = null,
+                                                    DateOnly? returnDate = null,
+                                                    DateOnly? renewDate = null,
+                                                    DateOnly? startDate = null,
+                                                    DateOnly? endDate = null)
     {
         IQueryable<IssuedBook> query = _context.IssuedBook.AsQueryable();
         if (!string.IsNullOrEmpty(name))
@@ -35,6 +42,30 @@ public sealed class IssuedBookservice
         if (isReturned != null)
         {
             query = query.Where(u => u.IsReturned == isReturned.Value);
+        }
+        if(issueDate != null)
+        {
+            query = query.Where(u => u.IssuedDate == issueDate.Value);
+        }
+        if (returnDate.HasValue)
+        {
+            query = query.Where(u => u.ReturnDate == returnDate.Value);
+        }
+        if (renewDate.HasValue)
+        {
+            query = query.Where(u => u.RenewDate == renewDate.Value);
+        }
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            query = query.Where(u => u.IssuedDate >= startDate.Value && u.IssuedDate <= endDate.Value);
+        }
+        else if (startDate.HasValue)
+        {
+            query = query.Where(u => u.IssuedDate >= startDate.Value);
+        }
+        else if (endDate.HasValue)
+        {
+            query = query.Where(u => u.IssuedDate <= endDate.Value);
         }
 
         IList<BookIssedDto> books = query
@@ -61,31 +92,32 @@ public sealed class IssuedBookservice
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
         if (book == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Book not found {bookid}");
         }
+
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
         if (user == null)
         {
-            return null;
+            throw new KeyNotFoundException($"User not found with UserId: {userid}");
         }
 
         if (book.Stock <= 0)
         {
-            return null;
+            throw new FileNotFoundException($"Book you are trying to issue is out of stock. BookId: {bookid}");
         }
 
         int issuedCount = _context.IssuedBook
             .Count(i => i.UserId == userid && !i.IsReturned);
         if (issuedCount >= user.MemberType.MaxBookAllowed)
         {
-            return null;
+            throw new ArgumentOutOfRangeException($"User already have Issued maximum number of books. UserId: {userid}");
         }
 
         IssuedBook? issuedBook =
             _context.IssuedBook.FirstOrDefault(b => b.BookId == bookid && b.UserId == userid && !b.IsReturned);
         if (issuedBook is not null)
         {
-            return null;
+            throw new DuplicateWaitObjectException($" This book {bookid} already issued by user {userid}");
         }
 
         book.Stock -= 1;
@@ -97,7 +129,7 @@ public sealed class IssuedBookservice
             IssuedDate = DateOnly.FromDateTime(DateTime.Today),
             ReturnDate = DateOnly.FromDateTime(DateTime.Today).AddDays(7),
             RenewStatus = false,
-            RenewDate =  null,
+            RenewDate = null,
             IsReturned = false
         };
         _context.Add(issuedBook);
@@ -121,18 +153,19 @@ public sealed class IssuedBookservice
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
         if (book == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Book not found {bookid}");
         }
+
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
         if (user == null)
         {
-            return null;
+            throw new KeyNotFoundException($"User not found with UserId: {userid}");
         }
 
         IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b => b.BookId == bookid && b.UserId == userid);
         if (issuedBook is null)
         {
-            return null;
+            throw new KeyNotFoundException($" This book {bookid} issued by user {userid} does not exist");
         }
 
         if (request.BoolRequest != issuedBook.IsReturned)
@@ -146,7 +179,7 @@ public sealed class IssuedBookservice
             {
                 if (book.Stock <= 0)
                 {
-                    return null;
+                    throw new FileNotFoundException($"Book you are trying to issue is out of stock. BookId: {bookid}");
                 }
 
                 issuedBook.IsReturned = false;
@@ -174,18 +207,19 @@ public sealed class IssuedBookservice
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
         if (book == null)
         {
-            return null;
+            throw new KeyNotFoundException($"Book not found {bookid}");
         }
+
         User? user = _context.User.Include(u => u.MemberType).FirstOrDefault(u => u.Id == userid);
         if (user is null)
         {
-            return null;
+            throw new KeyNotFoundException($"User not found with UserId: {userid}");
         }
 
         IssuedBook? issuedBook = _context.IssuedBook.FirstOrDefault(b => b.BookId == bookid && b.UserId == userid);
         if (issuedBook is null)
         {
-            return null;
+            throw new KeyNotFoundException($" This book {bookid} issued by user {userid} does not exist");
         }
 
         if (request.BoolRequest)

@@ -24,10 +24,24 @@ public static class IssuedBookEndpoints
         return endpoints;
     }
 
-    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service, string? name,
-        string? bookname, bool isReturned)
+    private static Ok<IEnumerable<BookIssedDto>> GetIssuedBookList(IssuedBookservice service,
+                                                                   string? name,
+                                                                   string? bookname,
+                                                                   bool? isReturned,
+                                                                   DateOnly? issueDate,
+                                                                   DateOnly? returnDate,
+                                                                   DateOnly? renewDate,
+                                                                   DateOnly? startDate,
+                                                                   DateOnly? endDate)
     {
-        IEnumerable<BookIssedDto> books = service.GetIssuedBooks(name, bookname, isReturned);
+        IEnumerable<BookIssedDto> books = service.GetIssuedBooks(name,
+                                                                bookname,
+                                                                isReturned,
+                                                                issueDate,
+                                                                returnDate,
+                                                                renewDate,
+                                                                startDate,
+                                                                endDate);
         return TypedResults.Ok(books);
     }
 
