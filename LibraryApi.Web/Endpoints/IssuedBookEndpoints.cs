@@ -32,7 +32,8 @@ public static class IssuedBookEndpoints
                                                                    DateOnly? returnDate,
                                                                    DateOnly? renewDate,
                                                                    DateOnly? startDate,
-                                                                   DateOnly? endDate)
+                                                                   DateOnly? endDate,
+                                                                   int? issueYear)
     {
         IEnumerable<BookIssedDto> books = service.GetIssuedBooks(name,
                                                                 bookname,
@@ -41,7 +42,8 @@ public static class IssuedBookEndpoints
                                                                 returnDate,
                                                                 renewDate,
                                                                 startDate,
-                                                                endDate);
+                                                                endDate,
+                                                                issueYear);
         return TypedResults.Ok(books);
     }
 

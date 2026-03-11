@@ -26,7 +26,8 @@ public sealed class IssuedBookservice
                                                     DateOnly? returnDate = null,
                                                     DateOnly? renewDate = null,
                                                     DateOnly? startDate = null,
-                                                    DateOnly? endDate = null)
+                                                    DateOnly? endDate = null,
+                                                    int? issueYear = null)
     {
         IQueryable<IssuedBook> query = _context.IssuedBook.AsQueryable();
         if (!string.IsNullOrEmpty(name))
@@ -61,13 +62,16 @@ public sealed class IssuedBookservice
         }
         else if (startDate.HasValue)
         {
-            query = query.Where(u => u.IssuedDate >= startDate.Value);
+            query = query.Where(u => u.ReturnDate >= startDate.Value);
         }
         else if (endDate.HasValue)
         {
-            query = query.Where(u => u.IssuedDate <= endDate.Value);
+            query = query.Where(u => u.ReturnDate <= endDate.Value);
         }
-
+        if (issueYear.HasValue)
+        {
+            query = query.Where(u=>u.IssuedDate.Year == issueYear.Value);
+        }
         IList<BookIssedDto> books = query
             .Include(i => i.Book)
             .Include(i => i.User)
