@@ -2,6 +2,7 @@ using LibraryApi.Persistence;
 using LibraryApi.Services;
 using LibraryApi.Web.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services
     .AddScoped<CategoryService>()
     .AddScoped<UserService>()
     .AddScoped<IssuedBookservice>();
+builder.Services.AddCors();
 
 WebApplication app = builder.Build();
 
@@ -26,7 +28,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+app.UseCors(option =>
+{
+    option.AllowAnyHeader();
+    option.AllowAnyMethod();
+    option.AllowAnyOrigin();
+});
 RouteGroupBuilder apiGroup = app.MapGroup("api");
 apiGroup.MapBookEndpoints()
     .MapCategoryEndpoints()
