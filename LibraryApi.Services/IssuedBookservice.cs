@@ -78,8 +78,10 @@ public sealed class IssuedBookservice
             .ThenInclude(u => u.MemberType)
             .Select(i => new BookIssedDto(
                 i.Id,
+                i.UserId,
                 i.User.Name,
                 i.User.MemberType.Name,
+                i.BookId,
                 i.Book.Name,
                 i.Dues,
                 i.IssuedDate,
@@ -140,8 +142,10 @@ public sealed class IssuedBookservice
         _context.SaveChanges();
         return new BookIssedDto(
             issuedBook.Id,
+            issuedBook.UserId,
             user.Name,
             user.MemberType.Name,
+            issuedBook.BookId,
             book.Name,
             issuedBook.Dues,
             issuedBook.IssuedDate,
@@ -194,8 +198,10 @@ public sealed class IssuedBookservice
         _context.SaveChanges();
         return new BookIssedDto(
             issuedBook.Id,
+            issuedBook.UserId,
             user.Name,
             user.MemberType.Name,
+            issuedBook.BookId,
             book.Name,
             issuedBook.Dues,
             issuedBook.IssuedDate,
@@ -240,8 +246,10 @@ public sealed class IssuedBookservice
         _context.SaveChanges();
         return new BookIssedDto(
             issuedBook.Id,
+            issuedBook.UserId,
             user.Name,
             user.MemberType.Name,
+            issuedBook.BookId,
             book.Name,
             issuedBook.Dues,
             issuedBook.IssuedDate,

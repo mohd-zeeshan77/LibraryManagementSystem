@@ -17,7 +17,8 @@ builder.Services
     .AddScoped<BookService>()
     .AddScoped<CategoryService>()
     .AddScoped<UserService>()
-    .AddScoped<IssuedBookservice>();
+    .AddScoped<IssuedBookservice>()
+    .AddScoped<MemberService>();
 builder.Services.AddCors();
 
 WebApplication app = builder.Build();
@@ -39,7 +40,8 @@ RouteGroupBuilder apiGroup = app.MapGroup("api");
 apiGroup.MapBookEndpoints()
     .MapCategoryEndpoints()
     .MapUserEndpoints()
-    .MapIssuedBookEndpoints();
+    .MapIssuedBookEndpoints()
+    .MapMemberEndpoints();
 
 app.MapGet("/", () => $"Running in {app.Environment.EnvironmentName} right now.");
 
