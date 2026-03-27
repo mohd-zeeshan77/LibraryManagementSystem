@@ -83,7 +83,6 @@ public sealed class IssuedBookservice
                 i.User.MemberType.Name,
                 i.BookId,
                 i.Book.Name,
-                i.Dues,
                 i.IssuedDate,
                 i.ReturnDate,
                 i.RenewStatus,
@@ -93,7 +92,7 @@ public sealed class IssuedBookservice
         return new ReadOnlyCollection<BookIssedDto>(books);
     }
 
-    public BookIssedDto? AddIssuedBook(int bookid, int userid, CreateIssuedBookRequest request)
+    public BookIssedDto? AddIssuedBook(int bookid, int userid)
     {
         Book? book = _context.Book.FirstOrDefault(b => b.Id == bookid);
         if (book == null)
@@ -131,7 +130,6 @@ public sealed class IssuedBookservice
         {
             BookId = bookid,
             UserId = userid,
-            Dues = request.Dues,
             IssuedDate = DateOnly.FromDateTime(DateTime.Today),
             ReturnDate = DateOnly.FromDateTime(DateTime.Today).AddDays(7),
             RenewStatus = false,
@@ -147,7 +145,6 @@ public sealed class IssuedBookservice
             user.MemberType.Name,
             issuedBook.BookId,
             book.Name,
-            issuedBook.Dues,
             issuedBook.IssuedDate,
             issuedBook.ReturnDate,
             issuedBook.RenewStatus,
@@ -203,7 +200,6 @@ public sealed class IssuedBookservice
             user.MemberType.Name,
             issuedBook.BookId,
             book.Name,
-            issuedBook.Dues,
             issuedBook.IssuedDate,
             issuedBook.ReturnDate,
             issuedBook.RenewStatus,
@@ -251,7 +247,6 @@ public sealed class IssuedBookservice
             user.MemberType.Name,
             issuedBook.BookId,
             book.Name,
-            issuedBook.Dues,
             issuedBook.IssuedDate,
             issuedBook.ReturnDate,
             issuedBook.RenewStatus,

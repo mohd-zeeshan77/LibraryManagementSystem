@@ -7,7 +7,6 @@ public sealed class BookIssedDto(
     string UserType,
     int BookId,
     string BookName,
-    decimal Dues,
     DateOnly IssuedDate,
     DateOnly ReturnDate,
     bool RenewStatus,
@@ -20,7 +19,6 @@ public sealed class BookIssedDto(
     public string UserType { get; } = UserType;
     public int BookId { get; } = BookId;
     public string BookName { get; } = BookName;
-    public decimal Dues { get; } = Dues;
     public DateOnly IssuedDate { get; } = IssuedDate;
     public DateOnly ReturnDate { get; } = ReturnDate;
     public bool RenewStatus { get; } = RenewStatus;

@@ -47,10 +47,9 @@ public static class IssuedBookEndpoints
         return TypedResults.Ok(books);
     }
 
-    private static IResult AddIssuedBook(IssuedBookservice service, int bookid, int userid,
-        CreateIssuedBookRequest request)
+    private static IResult AddIssuedBook(IssuedBookservice service, int bookid, int userid)
     {
-        BookIssedDto? issuedbook = service.AddIssuedBook(bookid, userid, request);
+        BookIssedDto? issuedbook = service.AddIssuedBook(bookid, userid);
         return issuedbook is null ? TypedResults.NotFound() : TypedResults.Ok(issuedbook);
     }
 

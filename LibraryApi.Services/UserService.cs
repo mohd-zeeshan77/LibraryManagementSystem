@@ -79,12 +79,12 @@ public sealed class UserService
         return new UserDto(user.Id, user.Name, member.Name);
     }
 
-    public UserDto? EditPremium(int userid, ChangeMemberTypeRequest request)
+    public UserDto? EditPremium(int id, ChangeMemberTypeRequest request)
     {
-        User? user = _dbContext.User.FirstOrDefault(s => s.Id == userid);
+        User? user = _dbContext.User.FirstOrDefault(s => s.Id == id);
         if (user is null)
         {
-            throw new KeyNotFoundException($"user not Exist {userid}");
+            throw new KeyNotFoundException($"user not Exist {id}");
         }
 
         MemberType? member = _dbContext.MemberType.FirstOrDefault(m => m.Id == request.MemberId);
@@ -95,6 +95,6 @@ public sealed class UserService
 
         user.TypeId = request.MemberId;
         _dbContext.SaveChanges();
-        return new UserDto(userid, user.Name, member.Name);
+        return new UserDto(id, user.Name, member.Name);
     }
 }
