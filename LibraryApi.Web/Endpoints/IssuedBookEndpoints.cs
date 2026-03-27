@@ -21,6 +21,7 @@ public static class IssuedBookEndpoints
         issuedGroup.MapPost("book/{bookid:int}/user/{userid:int}", AddIssuedBook);
         issuedGroup.MapPatch("book/{bookid:int}/user/{userid:int}/returned", CheckIsReturn);
         issuedGroup.MapPatch("book/{bookid:int}/user/{userid:int}/renew", UpdateRenew);
+        issuedGroup.MapDelete("{id:int}", DeleteIssuedBook);
         return endpoints;
     }
 
@@ -62,6 +63,11 @@ public static class IssuedBookEndpoints
     private static IResult UpdateRenew(IssuedBookservice service, int bookid, int userid, BoolPatchRequest request)
     {
         BookIssedDto? issue = service.UpdateRenew(bookid, userid, request);
+        return issue is null ? TypedResults.NotFound() : TypedResults.Ok(issue);
+    }
+    private static IResult DeleteIssuedBook(IssuedBookservice service ,int id)
+    {
+        BookIssedDto? issue = service.DeleteIssuedBook(id);
         return issue is null ? TypedResults.NotFound() : TypedResults.Ok(issue);
     }
 }

@@ -254,4 +254,31 @@ public sealed class IssuedBookservice
             issuedBook.IsReturned
         );
     }
+    public BookIssedDto? DeleteIssuedBook(int id)
+    {
+        IssuedBook? issue = _context.IssuedBook
+    .Include(i => i.User)
+        .ThenInclude(u => u.MemberType)
+    .Include(i => i.Book)
+    .FirstOrDefault(i => i.Id == id);
+        if (issue is null)
+        {
+            throw new FileNotFoundException($"Issued ID {id} not found");
+        }
+        _context.Remove(issue);
+        _context.SaveChanges();
+        return new BookIssedDto(
+                        issue.Id,
+                        issue.UserId,
+                        issue.User.Name,
+                        issue.User.MemberType.Name,
+                        issue.BookId,
+                        issue.Book.Name,
+                        issue.IssuedDate,
+                        issue.ReturnDate,
+                        issue.RenewStatus,
+                        issue.RenewDate,
+                        issue.IsReturned
+            );
+    }
 }

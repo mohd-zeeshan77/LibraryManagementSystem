@@ -18,7 +18,7 @@ public static class MemberEndpoints
         memberGroup.MapGet("", GetMembers);
         return endpoints;
     }
-    public static Ok<IEnumerable<MemberDto>> GetMembers(MemberService service)
+    private static Ok<IEnumerable<MemberDto>> GetMembers(MemberService service)
     {
         IEnumerable<MemberDto> member = service.GetMemberList();
         return TypedResults.Ok(member);

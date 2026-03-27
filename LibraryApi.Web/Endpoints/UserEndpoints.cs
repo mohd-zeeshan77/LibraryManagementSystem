@@ -25,32 +25,32 @@ public static class UserEndpoints
         return endpoints;
     }
 
-    public static Ok<IEnumerable<UserDto>> GetUsers(UserService service)
+    private static Ok<IEnumerable<UserDto>> GetUsers(UserService service)
     {
         ArgumentNullException.ThrowIfNull(service);
         IEnumerable<UserDto> list = service.GetUsers();
         return TypedResults.Ok(list);
     }
 
-    public static IResult GetMemberType(UserService service, int Id)
+    private static IResult GetMemberType(UserService service, int Id)
     {
         MemberTypeDto? member = service.GetMemberType(Id);
         return member is null ? TypedResults.NotFound() : TypedResults.Ok(member);
     }
 
-    public static IResult GetUserById(UserService service, int Id)
+    private static IResult GetUserById(UserService service, int Id)
     {
         UserDto? user = service.GetUserById(Id);
         return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);
     }
 
-    public static IResult AddUser(UserService service, int TypeId, CreateUserRequest request)
+    private static IResult AddUser(UserService service, int TypeId, CreateUserRequest request)
     {
         UserDto? user = service.AddUser(TypeId, request);
         return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);
     }
 
-    public static IResult ChangeType(UserService service, int id, ChangeMemberTypeRequest request)
+    private static IResult ChangeType(UserService service, int id, ChangeMemberTypeRequest request)
     {
         UserDto? user = service.EditPremium(id, request);
         return user is null ? TypedResults.NotFound() : TypedResults.Ok(user);

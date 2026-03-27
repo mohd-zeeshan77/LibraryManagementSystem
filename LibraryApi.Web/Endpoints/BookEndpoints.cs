@@ -23,19 +23,19 @@ public static class BookEndpoints
         return endpoints;
     }
 
-    public static Ok<IEnumerable<BookDto>> GetBooks(BookService service, string? keyword)
+    private static Ok<IEnumerable<BookDto>> GetBooks(BookService service, string? keyword)
     {
         IEnumerable<BookDto> list = service.GetBooks(keyword);
         return TypedResults.Ok(list);
     }
 
-    public static IResult GetBook(BookService service, int Id)
+    private static IResult GetBook(BookService service, int Id)
     {
         BookDto? book = service.GetBook(Id);
         return book is null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 
-    public static IResult AddBook(BookService service, int categoryId, CreateBookRequest request)
+    private static IResult AddBook(BookService service, int categoryId, CreateBookRequest request)
     {
         BookDto? book = service.AddBook(categoryId, request);
         return book is null ? TypedResults.NotFound() : TypedResults.Ok(book);

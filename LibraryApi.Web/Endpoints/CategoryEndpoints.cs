@@ -23,13 +23,13 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    public static Ok<IEnumerable<CategoryDto>> GetCategories(CategoryService service)
+    private static Ok<IEnumerable<CategoryDto>> GetCategories(CategoryService service)
     {
         IEnumerable<CategoryDto> categories = service.GetCategories();
         return TypedResults.Ok(categories);
     }
 
-    public static IResult GetCategoryBook(CategoryService service, int Id)
+    private static IResult GetCategoryBook(CategoryService service, int Id)
     {
         CategoryBookDto? dto = service.GetCategoryBook(Id);
         return dto is null ? TypedResults.NotFound() : TypedResults.Ok(dto);
