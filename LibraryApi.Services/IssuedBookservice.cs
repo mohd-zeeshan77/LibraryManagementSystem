@@ -136,9 +136,10 @@ public sealed class IssuedBookservice
             RenewDate = null,
             IsReturned = false
         };
+
+        book.Stock -= 1;
         _context.Add(issuedBook);
         _context.SaveChanges();
-        book.Stock -= 1;
         return new BookIssedDto(
             issuedBook.Id,
             issuedBook.UserId,
