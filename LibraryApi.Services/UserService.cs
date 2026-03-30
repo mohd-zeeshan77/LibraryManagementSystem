@@ -23,7 +23,7 @@ public sealed class UserService
     {
         IList<UserDto> users = _dbContext.User
             .Include(u => u.MemberType)
-            .Select(u => new UserDto(u.Id, u.Name, u.MemberType.Name))
+            .Select(u => new UserDto(u.Id, u.Name, u.MemberType.Name,u.MemberType.MaxBookAllowed))
             .ToArray();
         return new ReadOnlyCollection<UserDto>(users);
     }
@@ -38,7 +38,7 @@ public sealed class UserService
             throw new KeyNotFoundException($"User alerady exist {Id}");
         }
 
-        return new UserDto(user.Id, user.Name, user.MemberType.Name);
+        return new UserDto(user.Id, user.Name, user.MemberType.Name,user.MemberType.MaxBookAllowed);
     }
 
     public MemberTypeDto? GetMemberType(int Id)
@@ -52,7 +52,7 @@ public sealed class UserService
         }
 
         IImmutableList<UserDto> users = member.Users
-            .Select(u => new UserDto(u.Id, u.Name, member.Name))
+            .Select(u => new UserDto(u.Id, u.Name, member.Name,member.MaxBookAllowed))
             .ToList()
             .ToImmutableList();
 
@@ -76,7 +76,7 @@ public sealed class UserService
         user = new User { Name = request.Name, TypeId = TypeId };
         _dbContext.Add(user);
         _dbContext.SaveChanges();
-        return new UserDto(user.Id, user.Name, member.Name);
+        return new UserDto(user.Id, user.Name, member.Name, member.MaxBookAllowed);
     }
 
     public UserDto? EditPremium(int id, ChangeMemberTypeRequest request)
@@ -95,6 +95,6 @@ public sealed class UserService
 
         user.TypeId = request.MemberId;
         _dbContext.SaveChanges();
-        return new UserDto(id, user.Name, member.Name);
+        return new UserDto(id, user.Name, member.Name,member.MaxBookAllowed);
     }
 }

@@ -125,7 +125,7 @@ public sealed class IssuedBookservice
             throw new DuplicateWaitObjectException($" This book {bookid} already issued by user {userid}");
         }
 
-        book.Stock -= 1;
+        
         issuedBook = new IssuedBook
         {
             BookId = bookid,
@@ -138,6 +138,7 @@ public sealed class IssuedBookservice
         };
         _context.Add(issuedBook);
         _context.SaveChanges();
+        book.Stock -= 1;
         return new BookIssedDto(
             issuedBook.Id,
             issuedBook.UserId,

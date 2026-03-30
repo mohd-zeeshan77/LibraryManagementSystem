@@ -19,7 +19,7 @@ public sealed class MemberService
     }
     public IEnumerable<MemberDto> GetMemberList()
     {
-        IList<MemberDto> member = _dbContext.MemberType.Select(m=> new MemberDto(m.Id, m.Name)).ToArray();
+        IList<MemberDto> member = _dbContext.MemberType.Select(m=> new MemberDto(m.Id, m.Name,m.MaxBookAllowed)).ToArray();
         return new ReadOnlyCollection<MemberDto>(member);
     }
 }
